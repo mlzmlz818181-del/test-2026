@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bisect widget test</title>
+<style>
+html.t-lock,html.t-lock body{overflow:visible!important}
+html.t-fixed #idx-widget-root .idx-map-overlay,html.t-fixed #idx-widget-root .idx-contact-overlay,html.t-fixed #idx-widget-root .idx-share-overlay,html.t-fixed #idx-widget-root .idx-print-overlay,html.t-fixed #idx-widget-root .idx-copied-overlay,html.t-fixed #idx-widget-root .idx-saved-panel,html.t-fixed #idx-widget-root .idx-saved-panel-overlay{display:none!important}
+html.t-ov #idx-widget-root .idx-modal-overlay{scrollbar-width:auto!important}
+html.t-ov #idx-widget-root .idx-modal-overlay.open{display:block!important}
+html.t-ov #idx-widget-root .idx-modal{animation:none!important}
+#ctl{padding:10px 14px;background:#111;color:#fff;font:16px/1.6 sans-serif}
+#ctl label{display:block}
+</style>
+</head>
+<body>
+<div id="ctl">
+<b>Pick ONE setting, then run a search, scroll down, and open listings:</b>
+<label><input type="radio" name="t" value="" checked> 0 &ndash; Normal (nothing changed)</label>
+<label><input type="radio" name="t" value="t-lock"> 1 &ndash; Page lock switched off</label>
+<label><input type="radio" name="t" value="t-fixed"> 2 &ndash; Other fixed panels hidden</label>
+<label><input type="radio" name="t" value="t-ov"> 3 &ndash; Plain overlay styling</label>
+</div>
+<div id="idx-widget-root"
+  data-api-key="MILE-CA-TEST-2026"
+  data-agent-name="Your Name"
+  data-agent-email="you@youremail.com"
+  data-agent-phone="(416) 555-0199"
+  data-agent-brokerage="Your Brokerage Inc."
+  data-color-primary="#2D3748"
+  data-color-accent="#D69E2E"
+  data-country="CA">
+</div>
+<script src="https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=14"></script>
+<script>
+document.getElementById('ctl').addEventListener('change',function(e){
+  var h=document.documentElement;
+  ['t-lock','t-fixed','t-ov'].forEach(function(c){h.classList.remove(c);});
+  if(e.target.value)h.classList.add(e.target.value);
+});
+</script>
+</body>
+</html>
