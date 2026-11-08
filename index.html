@@ -1,13 +1,17 @@
-<script>
-(function(){var b=document.createElement('div');b.style.cssText='position:fixed;left:4px;top:4px;z-index:2147483647;background:#000;color:#0f0;font:11px/1.3 monospace;padding:4px 6px;pointer-events:none;white-space:pre';
-document.addEventListener('DOMContentLoaded',function(){document.body.appendChild(b);var st=document.createElement('style');st.textContent='#idx-widget-root .idx-modal-overlay.open{outline:4px solid red!important;outline-offset:-4px;}';document.head.appendChild(st);});
-var log=[];
-function snap(tag){var v=window.visualViewport,o=document.getElementById('idxModalOverlay'),r=o?o.getBoundingClientRect():null;return tag+' iH'+innerHeight+' vvH'+(v?v.height.toFixed(0):'-')+' vvT'+(v?v.offsetTop.toFixed(0):'-')+' sY'+Math.round(scrollY)+' oT'+(r?r.top.toFixed(0):'-')+' oH'+(r?r.height.toFixed(0):'-');}
-function show(){b.textContent=log.slice(-5).join('\n');}
-var t=setInterval(function(){var o=document.getElementById('idxModalOverlay');if(!o)return;clearInterval(t);
-new MutationObserver(function(){if(o.classList.contains('open')){log=[snap('open')];show();[150,600,1500].forEach(function(ms){setTimeout(function(){log.push(snap('+'+ms));show();},ms);});}}).observe(o,{attributes:true,attributeFilter:['class']});},200);
-})();
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IDX Test</title>
+<style>
+  .idx-test-layout{display:grid;grid-template-columns:var(--left,35%) 1fr;gap:0;border:2px solid #444;min-height:600px;}
+  .idx-test-left{padding:24px;background:#f4f4f4;border-right:2px solid #444;}
+  .idx-test-right{padding:16px;min-width:0;}
+  @media(max-width:700px){.idx-test-layout{grid-template-columns:1fr;}.idx-test-left{border-right:0;border-bottom:2px solid #444;}}
 </style>
+</head>
+<body>
 
 <div class="idx-test-layout">
   <div class="idx-test-left">
@@ -15,27 +19,30 @@ new MutationObserver(function(){if(o.classList.contains('open')){log=[snap('open
     <p>Sample left-hand content. Contact info, bio, etc.</p>
   </div>
   <div class="idx-test-right">
-
-    <!-- PASTE YOUR WIDGET SNIPPET HERE (the div + script) -->
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IDX Test</title>
-</head>
-<body>
-<div id="idx-widget-root"
-  data-api-key="MILE-CA-TEST-2026"
-  data-agent-name="Your Name"
-  data-agent-email="you@youremail.com"
-  data-agent-phone="(416) 555-0199"
-  data-agent-brokerage="Your Brokerage Inc."
-  data-color-primary="#2D3748"
-  data-color-accent="#D69E2E"
-  data-country="CA">
-</div>
-<script src="https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=11"></script>
-</body></html>
+    <div id="idx-widget-root"
+      data-api-key="MILE-CA-TEST-2026"
+      data-agent-name="Your Name"
+      data-agent-email="you@youremail.com"
+      data-agent-phone="(416) 555-0199"
+      data-agent-brokerage="Your Brokerage Inc."
+      data-color-primary="#2D3748"
+      data-color-accent="#D69E2E"
+      data-country="CA">
+    </div>
+    <script src="https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=11"></script>
   </div>
 </div>
+
+<script>
+(function(){var b=document.createElement('div');b.style.cssText='position:fixed;left:4px;top:4px;z-index:2147483647;background:#000;color:#0f0;font:11px/1.3 monospace;padding:4px 6px;pointer-events:none;white-space:pre';
+document.body.appendChild(b);var st=document.createElement('style');st.textContent='#idx-widget-root .idx-modal-overlay.open{outline:4px solid red!important;outline-offset:-4px;}';document.head.appendChild(st);
+var log=[];
+function snap(tag){var v=window.visualViewport,o=document.getElementById('idxModalOverlay'),r=o?o.getBoundingClientRect():null;return tag+' iH'+innerHeight+' vvH'+(v?v.height.toFixed(0):'-')+' vvT'+(v?v.offsetTop.toFixed(0):'-')+' sY'+Math.round(scrollY)+' oT'+(r?r.top.toFixed(0):'-')+' oH'+(r?r.height.toFixed(0):'-');}
+function show(){b.textContent=log.slice(-5).join('\n');}
+var t=setInterval(function(){var o=document.getElementById('idxModalOverlay');if(!o)return;clearInterval(t);
+new MutationObserver(function(){if(o.classList.contains('open')){log=[snap('open')];show();[150,600,1500].forEach(function(ms){setTimeout(function(){log.push(snap('+'+ms));show();},ms);});}}).observe(o,{attributes:true,attributeFilter:['class']});},200);
+})();
+</script>
+
+</body>
+</html>
