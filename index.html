@@ -7,7 +7,6 @@ function show(){b.textContent=log.slice(-5).join('\n');}
 var t=setInterval(function(){var o=document.getElementById('idxModalOverlay');if(!o)return;clearInterval(t);
 new MutationObserver(function(){if(o.classList.contains('open')){log=[snap('open')];show();[150,600,1500].forEach(function(ms){setTimeout(function(){log.push(snap('+'+ms));show();},ms);});}}).observe(o,{attributes:true,attributeFilter:['class']});},200);
 })();
-</script>
 </style>
 
 <div class="idx-test-layout">
