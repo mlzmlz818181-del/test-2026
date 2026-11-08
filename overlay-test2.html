@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overlay test 2</title>
+<style>
+body{font-family:sans-serif;margin:0}
+.top{padding:20px}
+.spacer{height:3200px;background:linear-gradient(#fff,#cde)}
+.bar{padding:20px 20px 220px}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;overflow-y:auto;padding:24px 16px}
+.ov.open{display:block}
+.box{background:#fff;border-radius:16px;min-height:1400px;padding:20px;max-width:600px;margin:0 auto;position:relative}
+.x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:#333;color:#fff;border:0;font-size:18px}
+button.t{font-size:18px;padding:12px;margin:6px}
+#rd{position:fixed;left:6px;top:38%;z-index:2147483647;background:rgba(0,0,0,.9);color:#ff0;font:bold 15px/1.45 monospace;padding:8px 10px;border:2px solid #ff0;border-radius:6px;pointer-events:none;white-space:pre;display:none}
+</style></head>
+<body>
+<div class="top"><h2>Chrome iPad overlay test 2</h2>
+<p>Flick down to the very bottom of this page. Tap a button THERE without scrolling back up. Reload the page between buttons.</p></div>
+<div class="spacer"></div>
+<div class="bar">
+<button class="t" onclick="openOv(0)">1: plain overlay</button>
+<button class="t" onclick="openOv(1)">2: + overflow hidden</button>
+<button class="t" onclick="openOv(2)">3: + body position fixed</button>
+</div>
+<div class="ov" id="ov"><div class="box"><button class="x" onclick="closeOv()">&times;</button>
+<h3>Listing-like box</h3>
+<p>Is the X visible with space above it? Is there a strip at the bottom? Does the page behind move?</p>
+<p style="margin-top:1200px">BOTTOM OF BOX</p></div></div>
+<div id="rd"></div>
+<script>
+var y=0,log=[],rd=document.getElementById('rd'),ov=document.getElementById('ov');
+function snap(tag){var v=window.visualViewport,r=ov.getBoundingClientRect();return tag+' iH'+innerHeight+' vvH'+(v?v.height.toFixed(0):'-')+' sY'+Math.round(scrollY)+' oT'+r.top.toFixed(0)+' oH'+r.height.toFixed(0);}
+function openOv(m){y=window.scrollY;
+ if(m>=1){document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden';}
+ if(m>=2){document.body.style.position='fixed';document.body.style.top='-'+y+'px';document.body.style.left='0';document.body.style.right='0';}
+ ov.classList.add('open');rd.style.display='block';log=[snap('open')];rd.textContent=log.join('\n');
+ [150,600,1500].forEach(function(ms){setTimeout(function(){log.push(snap('+'+ms));rd.textContent=log.join('\n');},ms);});}
+function closeOv(){ov.classList.remove('open');rd.style.display='none';
+ document.documentElement.style.overflow='';document.body.style.overflow='';
+ document.body.style.position='';document.body.style.top='';document.body.style.left='';document.body.style.right='';
+ window.scrollTo(0,y);}
+</script></body></html>
