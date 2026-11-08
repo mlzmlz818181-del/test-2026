@@ -41,4 +41,10 @@ document.getElementById('ctl').addEventListener('change',function(e){
 });
 </script>
 </body>
+<script>
+(function(){var b=document.createElement('div');b.style.cssText='position:fixed;left:6px;top:38%;z-index:2147483647;background:rgba(0,0,0,0.9);color:#ff0;font:bold 15px/1.45 monospace;padding:8px 10px;border:2px solid #ff0;border-radius:6px;pointer-events:none;white-space:pre';document.body.appendChild(b);
+function u(){var v=window.visualViewport,o=document.getElementById('idxModalOverlay'),r=o&&o.classList.contains('open')?o.getBoundingClientRect():null,a=document.activeElement;
+b.textContent=['iH '+innerHeight+'  vvH '+(v?v.height.toFixed(0):'-')+'  scale '+(v?v.scale.toFixed(2):'-'),'sY '+Math.round(scrollY)+'  docH '+document.documentElement.scrollHeight,'overlay '+(r?('top '+r.top.toFixed(0)+' h '+r.height.toFixed(0)):'closed'),'focus '+(a?a.tagName+'#'+(a.id||''):'-')].join('\n');}
+setInterval(u,200);})();
+</script>  
 </html>
