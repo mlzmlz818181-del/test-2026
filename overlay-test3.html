@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overlay test 3</title>
+<style>
+body{font-family:sans-serif;margin:0}
+.row{height:700px;padding:20px;background:linear-gradient(#fff,#dde);border-bottom:1px solid #99a}
+button.t{font-size:18px;padding:14px;margin:6px}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;overflow-y:auto;padding:24px 16px}
+.ov.open{display:flex;align-items:flex-start;justify-content:center}
+.box{background:#fff;border-radius:16px;width:100%;max-width:600px;margin:auto;padding:20px;position:relative;overflow:hidden}
+.x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:#333;color:#fff;border:0;font-size:18px}
+#rd{position:fixed;left:6px;top:38%;z-index:2147483647;background:rgba(0,0,0,.9);color:#ff0;font:bold 14px/1.45 monospace;padding:8px 10px;border:2px solid #ff0;border-radius:6px;pointer-events:none;white-space:pre;display:none}
+</style></head>
+<body>
+<div id="rows"></div>
+<div class="ov" id="ov"><div class="box" id="box"><button class="x" onclick="closeOv()">&times;</button><div id="inner"></div></div></div>
+<div id="rd"></div>
+<script>
+var rows=document.getElementById('rows'),s='';
+for(var i=1;i<=12;i++){s+='<div class="row"><h3>Row '+i+'</h3><button class="t" onclick="openOv(false)">Open: full content</button><button class="t" onclick="openOv(true)">Open: loading, then full</button></div>';}
+rows.innerHTML=s;
+var y=0,log=[],rd=document.getElementById('rd'),ov=document.getElementById('ov'),inner=document.getElementById('inner');
+function tall(){inner.innerHTML='<h3>Listing-like box</h3><p>Is the X visible with space above it? Is there a strip at the bottom?</p><div style="height:1500px"></div><p>BOTTOM OF BOX</p>';}
+function snap(tag){var v=window.visualViewport,r=ov.getBoundingClientRect();return tag+' iH'+innerHeight+' vvH'+(v?v.height.toFixed(0):'-')+' vvT'+(v?v.offsetTop.toFixed(0):'-')+' sY'+Math.round(scrollY)+' oT'+r.top.toFixed(0);}
+function openOv(delayed){y=window.scrollY;
+ document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden';
+ if(delayed){inner.innerHTML='<p>Loading listing details...</p>';setTimeout(tall,700);}else{tall();}
+ ov.classList.add('open');rd.style.display='block';log=[snap('open')];rd.textContent=log.join('\n');
+ [150,600,1500].forEach(function(ms){setTimeout(function(){log.push(snap('+'+ms));rd.textContent=log.join('\n');},ms);});}
+function closeOv(){ov.classList.remove('open');rd.style.display='none';
+ document.documentElement.style.overflow='';document.body.style.overflow='';window.scrollTo(0,y);}
+</script></body></html>
