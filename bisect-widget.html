@@ -65,12 +65,19 @@ document.getElementById('ctl').addEventListener('change',function(e){
 });
 </script>
 <style>
+@media screen{
 html.idx-cri-lock{background:#262626!important}
 html.idx-cri-lock body{visibility:hidden!important;background:#262626!important}
 html.idx-cri-lock #idx-widget-root .idx-modal-overlay.open,
+html.idx-cri-lock #idx-widget-root .idx-map-overlay.open,
+html.idx-cri-lock #idx-widget-root .idx-contact-overlay.open,
+html.idx-cri-lock #idx-widget-root .idx-share-overlay.open,
+html.idx-cri-lock #idx-widget-root .idx-print-overlay.open,
+html.idx-cri-lock #idx-widget-root .idx-copied-overlay.open,
 html.idx-cri-lock #idx-widget-root .idx-saved-panel-overlay.open,
 html.idx-cri-lock #idx-widget-root .idx-saved-panel.open{visibility:visible!important}
 html.idx-cri-lock #idx-widget-root .idx-modal-overlay.open{background:#262626!important;padding-bottom:140px!important}
+}
 </style>
 
 <script>
