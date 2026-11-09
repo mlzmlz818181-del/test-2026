@@ -66,32 +66,6 @@ document.getElementById('ctl').addEventListener('change',function(e){
   else delete h.dataset.sc;
 });
 </script>
-<script>
-(function(){
-  if(!/CriOS/.test(navigator.userAgent))return;
-  var h=document.documentElement;
-  function chk(){
-    var any=document.querySelector('#idx-widget-root .idx-modal-overlay.open,#idx-widget-root .idx-saved-panel.open');
-    requestAnimationFrame(chk);
-  }
-  requestAnimationFrame(chk);
-})();
-</script>
 
-<script>
-(function(){
-  if(!/CriOS/.test(navigator.userAgent))return;
-  var sel='#idx-widget-root .idx-modal-overlay.open,#idx-widget-root .idx-map-overlay.open,#idx-widget-root .idx-contact-overlay.open,#idx-widget-root .idx-share-overlay.open,#idx-widget-root .idx-print-overlay.open,#idx-widget-root .idx-copied-overlay.open';
-  function fix(){
-    document.querySelectorAll(sel).forEach(function(o){
-      var t=parseFloat(o.dataset.fixT||'0');
-      var natural=o.getBoundingClientRect().top-t;
-      var need=Math.abs(natural)>1?-natural:0;
-    });
-    requestAnimationFrame(fix);
-  }
-  requestAnimationFrame(fix);
-})();
-</script>  
 </body>
 </html>
