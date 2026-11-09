@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bisect 4</title>
+<style>
+body{margin:0;font-family:sans-serif}
+.spacer{height:3000px;background:linear-gradient(#fff,#cde)}
+</style>
+</head>
+<body>
+<div id="idx-widget-root"
+  data-api-key="MILE-CA-TEST-2026"
+  data-agent-name="Your Name"
+  data-agent-email="you@youremail.com"
+  data-agent-phone="(416) 555-0199"
+  data-agent-brokerage="Your Brokerage Inc."
+  data-color-primary="#2D3748"
+  data-color-accent="#D69E2E"
+  data-country="CA">
+</div>
+<script>
+/*
+  FLAGS  bisect4.html?x=a,b   (default none)
+    sc0 : scrollIntoView does nothing at all (widget never scrolls itself)
+    sci : scrollIntoView always instant instead of smooth
+    lz  : strip loading="lazy" from every image the widget adds
+    ri  : hide the images on the result cards
+    bl  : blur the focused element right after any click on Find My Home
+  s=0 removes the 3000px spacer
+*/
+var q=location.search;
+var sp=(q.match(/[?&]s=([01])/)||[])[1]!=='0';
+var xm=(q.match(/[?&]x=([a-z0-9,]*)/)||[])[1]||'none';
+var F=xm.split(',');function on(f){return F.indexOf(f)>-1;}
+
+if(sp){var d=document.createElement('div');d.className='spacer';document.body.appendChild(d);}
+
+if(on('sc0')){Element.prototype.scrollIntoView=function(){};}
+if(on('sci')){var _si=Element.prototype.scrollIntoView;Element.prototype.scrollIntoView=function(o){
+  if(o&&typeof o==='object'){o=Object.assign({},o,{behavior:'auto'});}return _si.call(this,o);};}
+if(on('ri')){var st=document.createElement('style');st.textContent='#idxResultsArea img{display:none!important;}';document.head.appendChild(st);}
+if(on('lz')){new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){
+  if(n.nodeType!==1)return;var im=n.tagName==='IMG'?[n]:[].slice.call(n.querySelectorAll('img'));
+  im.forEach(function(i){if(i.getAttribute('loading')==='lazy'){i.setAttribute('loading','eager');}});});});
+}).observe(document.documentElement,{childList:true,subtree:true});}
+
+var s=document.createElement('script');
+s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=16';
+document.body.appendChild(s);
+
+/* ---------- readout + change log ---------- */
+var box=document.createElement('div');
+box.style.cssText='position:fixed;left:4px;top:8%;z-index:2147483647;background:rgba(0,0,0,0.9);color:#ff0;font:bold 12px/1.35 monospace;padding:6px 8px;border:2px solid #ff0;border-radius:6px;pointer-events:none;white-space:pre;max-width:92vw';
+document.body.appendChild(box);
+
+var t0=Date.now(),lastEv='load',log=[],prev='',worst=0,opens=0,bad=0,wasOpen=false;
+function nm(e){var t=e.target;if(!t||!t.tagName)return e.type;
+  return e.type+':'+t.tagName.toLowerCase()+(t.id?'#'+t.id:'')+(t.className&&typeof t.className==='string'?'.'+t.className.split(' ')[0]:'');}
+['touchstart','click','focusin','focusout','input','keydown'].forEach(function(n){
+  document.addEventListener(n,function(e){lastEv=nm(e);
+    if(on('bl')&&n==='click'&&e.target&&e.target.id==='idxSearchBtn'){
+      setTimeout(function(){if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();},50);}
+  },true);});
+window.addEventListener('scroll',function(){lastEv='scroll';},true);
+if(window.visualViewport){['resize','scroll'].forEach(function(n){visualViewport.addEventListener(n,function(){lastEv='vv-'+n;});});}
+
+function ae(){var a=document.activeElement;if(!a||a===document.body)return 'body';
+  return a.tagName.toLowerCase()+(a.id?'#'+a.id:'')+(a.type?'['+a.type+']':'');}
+
+setInterval(function(){
+  var v=window.visualViewport,o=document.getElementById('idxModalOverlay');
+  var isOpen=!!(o&&o.classList.contains('open')),r=isOpen?o.getBoundingClientRect():null;
+  if(isOpen&&!wasOpen){opens++;setTimeout(function(){var rr=o.getBoundingClientRect();if(rr.top<-20)bad++;if(rr.top<worst)worst=rr.top;},900);}
+  wasOpen=isOpen;
+  var vh=v?v.height.toFixed(0):'-',vt=v?v.offsetTop.toFixed(0):'-';
+  var key=innerHeight+'|'+vh+'|'+vt+'|'+ae();
+  if(key!==prev){
+    log.push(((Date.now()-t0)/1000).toFixed(1)+'s iH'+innerHeight+' vvH'+vh+' vvT'+vt+' sY'+Math.round(scrollY)+' '+ae()+' <'+lastEv);
+    if(log.length>9)log.shift();prev=key;}
+  box.textContent='x='+xm+' sp='+(sp?1:0)+'  opens '+opens+' BAD '+bad+' worst '+worst.toFixed(0)+
+    '\nnow iH'+innerHeight+' vvH'+vh+' vvT'+vt+' sY'+Math.round(scrollY)+' ovl '+(r?r.top.toFixed(0):'closed')+
+    '\n'+log.join('\n');
+},100);
+</script>
+</body>
+</html>
