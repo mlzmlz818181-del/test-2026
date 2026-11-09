@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bisect 5</title>
+<style>
+body{margin:0;font-family:sans-serif}
+.spacer{height:3000px;background:linear-gradient(#fff,#cde)}
+#bxCopy{position:fixed;right:8px;bottom:110px;z-index:2147483647;background:#ff0;color:#000;font:bold 15px monospace;border:2px solid #000;border-radius:8px;padding:10px 14px}
+#bxTa{position:fixed;left:3%;top:10%;width:94%;height:60%;z-index:2147483647;font:11px monospace;background:#fff;color:#000;border:3px solid #f00;display:none}
+</style>
+</head>
+<body>
+<div id="idx-widget-root"
+  data-api-key="MILE-CA-TEST-2026"
+  data-agent-name="Your Name"
+  data-agent-email="you@youremail.com"
+  data-agent-phone="(416) 555-0199"
+  data-agent-brokerage="Your Brokerage Inc."
+  data-color-primary="#2D3748"
+  data-color-accent="#D69E2E"
+  data-country="CA">
+</div>
+<script>
+/*
+  FLAGS  bisect5.html?x=a,b   (default none)
+    ro : the location box is readonly -> tapping it never opens the keyboard
+    ac : location box gets autocomplete/autocorrect/autocapitalize/spellcheck off
+    rs : after the box loses focus, nudge the scroll position (+1px then back) at 100/400/900ms
+    mv : after the box loses focus, briefly change the viewport meta tag and restore it
+    bl : on Find My Home click, blur the box first and wait 300ms before the search runs (log only)
+  s=0 removes the 3000px spacer
+*/
+var q=location.search;
+var sp=(q.match(/[?&]s=([01])/)||[])[1]!=='0';
+var xm=(q.match(/[?&]x=([a-z0-9,]*)/)||[])[1]||'none';
+var F=xm.split(',');function on(f){return F.indexOf(f)>-1;}
+if(sp){var d=document.createElement('div');d.className='spacer';document.body.appendChild(d);}
+
+var s=document.createElement('script');
+s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=16';
+document.body.appendChild(s);
+
+/* ---------- log ---------- */
+var all=[],t0=Date.now(),lastEv='load',prev='',opens=0,bad=0,worst=0,wasOpen=false,applied=false;
+function T(){return ((Date.now()-t0)/1000).toFixed(1)+'s';}
+function note(m){all.push(T()+' ** '+m);}
+note('PAGE x='+xm+' spacer='+(sp?1:0)+' UA='+navigator.userAgent.replace(/\s+/g,' ').slice(0,120));
+
+var box=document.createElement('div');
+box.style.cssText='position:fixed;left:4px;top:8%;z-index:2147483647;background:rgba(0,0,0,0.9);color:#ff0;font:bold 12px/1.35 monospace;padding:6px 8px;border:2px solid #ff0;border-radius:6px;pointer-events:none;white-space:pre;max-width:92vw';
+document.body.appendChild(box);
+
+var btn=document.createElement('button');btn.id='bxCopy';btn.textContent='COPY LOG';document.body.appendChild(btn);
+var ta=document.createElement('textarea');ta.id='bxTa';document.body.appendChild(ta);
+btn.addEventListener('click',function(){
+  var txt=all.join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){btn.textContent='COPIED ('+all.length+')';setTimeout(function(){btn.textContent='COPY LOG';},2000);},fallback);
+  }else fallback();
+  function fallback(){ta.value=txt;ta.style.display='block';ta.focus();ta.select();btn.textContent='TAP HERE TO CLOSE';
+    btn.onclick=function(){ta.style.display='none';btn.textContent='COPY LOG';btn.onclick=null;};}
+});
+
+function nm(e){var t=e.target;if(!t||!t.tagName)return e.type;
+  return e.type+':'+t.tagName.toLowerCase()+(t.id?'#'+t.id:'');}
+['touchstart','click','focusin','focusout','input'].forEach(function(n){
+  document.addEventListener(n,function(e){
+    if(e.target&&e.target.id==='bxCopy')return;
+    lastEv=nm(e);
+    if(n==='focusout'&&e.target&&e.target.id==='idxLocation'){onBlur();}
+    if(n==='click'&&e.target&&e.target.id==='idxSearchBtn'){note('FIND clicked');}
+  },true);});
+window.addEventListener('scroll',function(){lastEv='scroll';},true);
+if(window.visualViewport){['resize','scroll'].forEach(function(n){visualViewport.addEventListener(n,function(){lastEv='vv-'+n;});});}
+
+function onBlur(){
+  note('location box lost focus');
+  if(on('rs')){[100,400,900].forEach(function(ms){setTimeout(function(){
+    var y=window.pageYOffset;window.scrollTo(0,y+1);requestAnimationFrame(function(){window.scrollTo(0,y);});
+    note('rs nudge @'+ms);},ms);});}
+  if(on('mv')){var m=document.querySelector('meta[name=viewport]');
+    if(m){var c=m.getAttribute('content');setTimeout(function(){m.setAttribute('content',c+', maximum-scale=1');
+      setTimeout(function(){m.setAttribute('content',c);note('mv restored');},120);},100);}}
+}
+
+function ae(){var a=document.activeElement;if(!a||a===document.body)return 'body';
+  return a.tagName.toLowerCase()+(a.id?'#'+a.id:'');}
+
+setInterval(function(){
+  var loc=document.getElementById('idxLocation');
+  if(loc&&!applied){applied=true;
+    if(on('ro')){loc.readOnly=true;note('ro applied');}
+    if(on('ac')){loc.setAttribute('autocomplete','off');loc.setAttribute('autocorrect','off');
+      loc.setAttribute('autocapitalize','off');loc.setAttribute('spellcheck','false');note('ac applied');}
+  }
+  var v=window.visualViewport,o=document.getElementById('idxModalOverlay');
+  var isOpen=!!(o&&o.classList.contains('open')),r=isOpen?o.getBoundingClientRect():null;
+  if(isOpen&&!wasOpen){opens++;(function(n){setTimeout(function(){
+    var rr=o.getBoundingClientRect(),vv=window.visualViewport;
+    var isBad=rr.top<-20;if(isBad)bad++;if(rr.top<worst)worst=rr.top;
+    note('OPEN #'+n+' overlayTop='+rr.top.toFixed(0)+' iH='+innerHeight+' vvH='+(vv?vv.height.toFixed(0):'-')+' vvT='+(vv?vv.offsetTop.toFixed(0):'-')+(isBad?'  <<< BAD':'  ok'));
+  },900);})(opens);}
+  wasOpen=isOpen;
+  var vh=v?v.height.toFixed(0):'-',vt=v?v.offsetTop.toFixed(0):'-';
+  var key=innerHeight+'|'+vh+'|'+vt+'|'+ae();
+  if(key!==prev){all.push(T()+' iH'+innerHeight+' vvH'+vh+' vvT'+vt+' sY'+Math.round(scrollY)+' '+ae()+' <'+lastEv);prev=key;}
+  box.textContent='x='+xm+'  opens '+opens+' BAD '+bad+' worst '+worst.toFixed(0)+
+    '\nnow iH'+innerHeight+' vvH'+vh+' vvT'+vt+' sY'+Math.round(scrollY)+' ovl '+(r?r.top.toFixed(0):'closed')+
+    '\n'+all.slice(-5).join('\n');
+},100);
+</script>
+</body>
+</html>
