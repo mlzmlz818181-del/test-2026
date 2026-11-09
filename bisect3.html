@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bisect 3</title>
+<style>
+body{margin:0;font-family:sans-serif}
+.spacer{height:3000px;background:linear-gradient(#fff,#cde)}
+</style>
+</head>
+<body>
+<div id="idx-widget-root"
+  data-api-key="MILE-CA-TEST-2026"
+  data-agent-name="Your Name"
+  data-agent-email="you@youremail.com"
+  data-agent-phone="(416) 555-0199"
+  data-agent-brokerage="Your Brokerage Inc."
+  data-color-primary="#2D3748"
+  data-color-accent="#D69E2E"
+  data-country="CA">
+</div>
+<script>
+/*
+  URL FLAGS (comma separated), e.g.  bisect3.html?x=all   or   bisect3.html?x=oc,an
+    none : nothing changed (control - should fail)
+    all  : oc,an,th,sb,sp,im,ta,rd   (everything except ns)
+    oc   : overscroll-behavior back to auto on all overlays
+    an   : modal slide-in animation off
+    th   : thumbnail strip hidden
+    sb   : overlay scrollbar hiding rules removed
+    sp   : Saved panel + its overlay display:none
+    im   : gallery + thumbnail images hidden
+    ta   : touch-action forced to auto inside the widget
+    rd   : modal border-radius / overflow clip / shadow removed
+    ns   : structure change - overlay stops scrolling, the modal box scrolls instead
+  s=0 removes the 3000px spacer.
+*/
+var q=location.search;
+var sp=(q.match(/[?&]s=([01])/)||[])[1]!=='0';
+var xm=(q.match(/[?&]x=([a-z,]*)/)||[])[1]||'none';
+var flags=xm==='all'?'oc,an,th,sb,sp,im,ta,rd'.split(','):xm.split(',');
+function on(f){return flags.indexOf(f)>-1;}
+
+if(sp){var d=document.createElement('div');d.className='spacer';document.body.appendChild(d);}
+
+var R='#idx-widget-root ';
+var OV=R+'.idx-modal-overlay,'+R+'.idx-map-overlay,'+R+'.idx-contact-overlay,'+R+'.idx-share-overlay,'+R+'.idx-print-overlay,'+R+'.idx-copied-overlay,'+R+'.idx-saved-panel';
+var css='';
+if(on('oc'))css+=OV+'{overscroll-behavior:auto!important;}';
+if(on('an'))css+=R+'.idx-modal{animation:none!important;}';
+if(on('th'))css+=R+'.idx-thumbnails{display:none!important;}';
+if(on('sb'))css+=R+'.idx-modal-overlay{scrollbar-width:auto!important;}'+R+'.idx-modal-overlay::-webkit-scrollbar{display:block!important;}';
+if(on('sp'))css+=R+'.idx-saved-panel,'+R+'.idx-saved-panel-overlay{display:none!important;}';
+if(on('im'))css+=R+'.idx-gallery img,'+R+'.idx-thumb{visibility:hidden!important;}';
+if(on('ta'))css+=R+'*{touch-action:auto!important;}';
+if(on('rd'))css+=R+'.idx-modal{border-radius:0!important;overflow:visible!important;box-shadow:none!important;}';
+if(on('ns'))css+=R+'.idx-modal-overlay{overflow:hidden!important;align-items:center!important;}'+R+'.idx-modal{max-height:100%!important;overflow-y:auto!important;margin:0!important;}';
+if(css){var st=document.createElement('style');st.id='bx';st.textContent=css;document.head.appendChild(st);}
+
+var s=document.createElement('script');
+s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=15';
+document.body.appendChild(s);
+
+/* readout: also remembers the worst (most negative) overlay top and how many opens were bad */
+var b=document.createElement('div');
+b.style.cssText='position:fixed;left:6px;top:30%;z-index:2147483647;background:rgba(0,0,0,0.9);color:#ff0;font:bold 14px/1.4 monospace;padding:8px 10px;border:2px solid #ff0;border-radius:6px;pointer-events:none;white-space:pre';
+document.body.appendChild(b);
+var worst=0,opens=0,bad=0,wasOpen=false;
+setInterval(function(){
+  var v=window.visualViewport,o=document.getElementById('idxModalOverlay');
+  var isOpen=!!(o&&o.classList.contains('open'));
+  var r=isOpen?o.getBoundingClientRect():null;
+  if(isOpen&&!wasOpen){opens++;setTimeout(function(){var rr=o.getBoundingClientRect();if(rr.top<-20){bad++;}if(rr.top<worst)worst=rr.top;},900);}
+  wasOpen=isOpen;
+  b.textContent=[
+    'x='+xm+'  spacer '+(sp?'ON':'OFF'),
+    'iH '+innerHeight+' vvH '+(v?v.height.toFixed(0):'-')+' vvT '+(v?v.offsetTop.toFixed(0):'-'),
+    'sY '+Math.round(scrollY)+' docH '+document.documentElement.scrollHeight,
+    'overlay '+(r?('top '+r.top.toFixed(0)+' h '+r.height.toFixed(0)):'closed'),
+    'opens '+opens+'  BAD '+bad+'  worst '+worst.toFixed(0)
+  ].join('\n');
+},300);
+</script>
+</body>
+</html>
