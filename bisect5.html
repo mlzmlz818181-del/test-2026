@@ -54,6 +54,14 @@ document.body.appendChild(box);
 
 var btn=document.createElement('button');btn.id='bxCopy';btn.textContent='COPY LOG';document.body.appendChild(btn);
 var ta=document.createElement('textarea');ta.id='bxTa';document.body.appendChild(ta);
+var sb=document.createElement('button');sb.id='bxSearch';sb.textContent='SEARCH (no keyboard)';
+sb.style.cssText='position:fixed;left:8px;bottom:110px;z-index:2147483647;background:#0f0;color:#000;font:bold 15px monospace;border:2px solid #000;border-radius:8px;padding:10px 14px';
+document.body.appendChild(sb);
+sb.addEventListener('click',function(){
+  var l=document.getElementById('idxLocation');
+  if(l&&window.idxNewSearch){l.value='Toronto';note('NO-KEYBOARD search fired');window.idxNewSearch();}
+  else{note('widget not ready yet');}
+});
 btn.addEventListener('click',function(){
   var txt=all.join('\n');
   if(navigator.clipboard&&navigator.clipboard.writeText){
@@ -67,7 +75,7 @@ function nm(e){var t=e.target;if(!t||!t.tagName)return e.type;
   return e.type+':'+t.tagName.toLowerCase()+(t.id?'#'+t.id:'');}
 ['touchstart','click','focusin','focusout','input'].forEach(function(n){
   document.addEventListener(n,function(e){
-    if(e.target&&e.target.id==='bxCopy')return;
+    if(e.target&&(e.target.id==='bxCopy'||e.target.id==='bxSearch'))return;
     lastEv=nm(e);
     if(n==='focusout'&&e.target&&e.target.id==='idxLocation'){onBlur();}
     if(n==='click'&&e.target&&e.target.id==='idxSearchBtn'){note('FIND clicked');}
