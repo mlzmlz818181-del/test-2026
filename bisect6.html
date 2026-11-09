@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bisect 6</title>
+<style>
+body{margin:0;font-family:sans-serif}
+.spacer{height:3000px;background:linear-gradient(#fff,#cde)}
+#bxCopy{position:fixed;right:8px;bottom:110px;z-index:2147483647;background:#ff0;color:#000;font:bold 15px monospace;border:2px solid #000;border-radius:8px;padding:10px 14px}
+#bxSearch{position:fixed;left:8px;bottom:110px;z-index:2147483647;background:#0f0;color:#000;font:bold 15px monospace;border:2px solid #000;border-radius:8px;padding:10px 14px}
+#bxTa{position:fixed;left:3%;top:10%;width:94%;height:60%;z-index:2147483647;font:11px monospace;background:#fff;color:#000;border:3px solid #f00;display:none}
+</style>
+</head>
+<body>
+<div id="idx-widget-root"
+  data-api-key="MILE-CA-TEST-2026"
+  data-agent-name="Your Name"
+  data-agent-email="you@youremail.com"
+  data-agent-phone="(416) 555-0199"
+  data-agent-brokerage="Your Brokerage Inc."
+  data-color-primary="#2D3748"
+  data-color-accent="#D69E2E"
+  data-country="CA">
+</div>
+<script>
+/*
+  FLAGS  bisect6.html?x=a,b   (default none)
+    plain : do NOT load the widget. Plain page: one text input + a fixed overlay (control test)
+    iw    : viewport meta gets interactive-widget=resizes-content at load
+    dn    : after the city box loses focus, focus+blur a hidden readonly input
+    ab    : when the listing overlay opens, switch it from fixed to absolute and align it to the screen
+  s=0 removes the 3000px spacer
+*/
+var q=location.search;
+var sp=(q.match(/[?&]s=([01])/)||[])[1]!=='0';
+var xm=(q.match(/[?&]x=([a-z0-9,]*)/)||[])[1]||'none';
+var F=xm.split(',');function on(f){return F.indexOf(f)>-1;}
+
+if(on('iw')){var vm=document.querySelector('meta[name=viewport]');
+  if(vm)vm.setAttribute('content',vm.getAttribute('content')+', interactive-widget=resizes-content');}
+
+/* ---------- log ---------- */
+var all=[],t0=Date.now(),lastEv='load',prev='',opens=0,bad=0,worst=0,wasOpen=false,applied=false;
+function T(){return ((Date.now()-t0)/1000).toFixed(1)+'s';}
+function note(m){all.push(T()+' ** '+m);}
+note('PAGE x='+xm+' spacer='+(sp?1:0)+' UA='+navigator.userAgent.replace(/\s+/g,' ').slice(0,120));
+
+if(on('plain')){
+  document.getElementById('idx-widget-root').remove();
+  var box0=document.createElement('div');box0.style.cssText='padding:20px;font:16px sans-serif';
+  box0.innerHTML='<h3>Plain control page</h3><input id="idxLocation" type="text" placeholder="tap here, type, then tap OUTSIDE" style="font-size:18px;padding:10px;width:80%"><br><br><button id="bxOpen" style="font-size:18px;padding:12px">OPEN OVERLAY</button>';
+  document.body.appendChild(box0);
+  if(sp){var d0=document.createElement('div');d0.className='spacer';document.body.appendChild(d0);}
+  var ov=document.createElement('div');ov.id='idxModalOverlay';
+  ov.style.cssText='position:fixed;top:0;right:0;bottom:0;left:0;background:#b00;color:#fff;z-index:99990;display:none;font:20px sans-serif';
+  ov.innerHTML='<button id="bxClose" style="position:absolute;top:10px;right:10px;font-size:26px;padding:8px 16px">X</button><div style="padding:60px 20px">PLAIN OVERLAY - X should be top right, BOTTOM BAR should be flush with screen bottom</div><div style="position:absolute;left:0;right:0;bottom:0;background:#000;padding:20px;text-align:center">BOTTOM BAR</div>';
+  document.body.appendChild(ov);
+  document.getElementById('bxOpen').addEventListener('click',function(){ov.style.display='block';ov.classList.add('open');
+    document.documentElement.style.overflow='hidden';document.body.style.overflow='hidden';});
+  document.getElementById('bxClose').addEventListener('click',function(){ov.style.display='none';ov.classList.remove('open');
+    document.documentElement.style.overflow='';document.body.style.overflow='';});
+}else{
+  if(sp){var d=document.createElement('div');d.className='spacer';document.body.appendChild(d);}
+  var s=document.createElement('script');
+  s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=16';
+  document.body.appendChild(s);
+}
+
+var box=document.createElement('div');
+box.style.cssText='position:fixed;left:4px;bottom:170px;z-index:2147483647;background:rgba(0,0,0,0.9);color:#ff0;font:bold 12px/1.35 monospace;padding:6px 8px;border:2px solid #ff0;border-radius:6px;pointer-events:none;white-space:pre;max-width:92vw';
+document.body.appendChild(box);
+
+var btn=document.createElement('button');btn.id='bxCopy';btn.textContent='COPY LOG';document.body.appendChild(btn);
+var ta=document.createElement('textarea');ta.id='bxTa';document.body.appendChild(ta);
+var sb=document.createElement('button');sb.id='bxSearch';sb.textContent='SEARCH (no keyboard)';
+if(!on('plain'))document.body.appendChild(sb);
+sb.addEventListener('click',function(){
+  var l=document.getElementById('idxLocation');
+  if(l&&window.idxNewSearch){l.value='Toronto';note('NO-KEYBOARD search fired');window.idxNewSearch();}
+  else{note('widget not ready yet');}
+});
+btn.addEventListener('click',function(){
+  var txt=all.join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){btn.textContent='COPIED ('+all.length+')';setTimeout(function(){btn.textContent='COPY LOG';},2000);},fallback);
+  }else fallback();
+  function fallback(){ta.value=txt;ta.style.display='block';ta.focus();ta.select();btn.textContent='TAP HERE TO CLOSE';
+    btn.onclick=function(){ta.style.display='none';btn.textContent='COPY LOG';btn.onclick=null;};}
+});
+
+function nm(e){var t=e.target;if(!t||!t.tagName)return e.type;
+  return e.type+':'+t.tagName.toLowerCase()+(t.id?'#'+t.id:'');}
+['touchstart','click','focusin','focusout','input'].forEach(function(n){
+  document.addEventListener(n,function(e){
+    if(e.target&&(e.target.id==='bxCopy'||e.target.id==='bxSearch'||e.target.id==='bxTmp'))return;
+    lastEv=nm(e);
+    if(n==='focusout'&&e.target&&e.target.id==='idxLocation'){onBlur();}
+    if(n==='click'&&e.target&&e.target.id==='idxSearchBtn'){note('FIND clicked');}
+  },true);});
+window.addEventListener('scroll',function(){lastEv='scroll';},true);
+if(window.visualViewport){['resize','scroll'].forEach(function(n){visualViewport.addEventListener(n,function(){lastEv='vv-'+n;});});}
+
+function onBlur(){
+  note('location box lost focus');
+  if(on('dn')){setTimeout(function(){
+    var t=document.createElement('input');t.id='bxTmp';t.readOnly=true;
+    t.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;font-size:16px;border:0;padding:0';
+    document.body.appendChild(t);t.focus({preventScroll:true});
+    setTimeout(function(){t.blur();t.remove();note('dn done');},80);},50);}
+}
+
+/* ab: align the overlay with the screen using absolute positioning */
+function abApply(o){
+  var st=o.style;
+  st.position='absolute';st.right='auto';st.bottom='auto';
+  st.left='0px';st.top='0px';st.width=innerWidth+'px';st.height=innerHeight+'px';
+  for(var i=0;i<2;i++){var r=o.getBoundingClientRect();
+    st.top=(parseFloat(st.top)-r.top)+'px';st.left=(parseFloat(st.left)-r.left)+'px';}
+  note('ab applied top='+st.top+' left='+st.left+' h='+st.height);
+}
+function abClear(o){var st=o.style;['position','right','bottom','left','top','width','height'].forEach(function(p){st[p]='';});}
+
+function ae(){var a=document.activeElement;if(!a||a===document.body)return 'body';
+  return a.tagName.toLowerCase()+(a.id?'#'+a.id:'');}
+
+setInterval(function(){
+  var v=window.visualViewport,o=document.getElementById('idxModalOverlay');
+  var isOpen=!!(o&&o.classList.contains('open')),r=isOpen?o.getBoundingClientRect():null;
+  if(isOpen&&!wasOpen){opens++;
+    if(on('ab')){(function(el){setTimeout(function(){abApply(el);},60);})(o);}
+    (function(n,el){setTimeout(function(){
+      var rr=el.getBoundingClientRect(),vv=window.visualViewport;
+      var isBad=rr.top<-20||(rr.bottom<innerHeight-20);if(isBad)bad++;if(rr.top<worst)worst=rr.top;
+      note('OPEN #'+n+' overlayTop='+rr.top.toFixed(0)+' bottom='+rr.bottom.toFixed(0)+' iH='+innerHeight+' vvH='+(vv?vv.height.toFixed(0):'-')+' vvT='+(vv?vv.offsetTop.toFixed(0):'-')+(isBad?'  <<< BAD':'  ok (CHECK THE SCREEN: X visible? strip at bottom?)'));
+    },900);})(opens,o);}
+  if(!isOpen&&wasOpen&&on('ab')&&o){abClear(o);}
+  wasOpen=isOpen;
+  var vh=v?v.height.toFixed(0):'-',vt=v?v.offsetTop.toFixed(0):'-';
+  var key=innerHeight+'|'+vh+'|'+vt+'|'+ae();
+  if(key!==prev){all.push(T()+' iH'+innerHeight+' vvH'+vh+' vvT'+vt+' sY'+Math.round(scrollY)+' '+ae()+' <'+lastEv);prev=key;}
+  box.textContent='x='+xm+'  opens '+opens+' BAD '+bad+' worst '+worst.toFixed(0)+
+    '\nnow iH'+innerHeight+' vvH'+vh+' vvT'+vt+' sY'+Math.round(scrollY)+' ovl '+(r?r.top.toFixed(0):'closed')+
+    '\n'+all.slice(-4).join('\n');
+},100);
+</script>
+</body>
+</html>
