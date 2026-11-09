@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bisect 2</title>
+<style>
+body{margin:0;font-family:sans-serif}
+.spacer{height:3000px;background:linear-gradient(#fff,#cde)}
+</style>
+</head>
+<body>
+<div id="idx-widget-root"
+  data-api-key="MILE-CA-TEST-2026"
+  data-agent-name="Your Name"
+  data-agent-email="you@youremail.com"
+  data-agent-phone="(416) 555-0199"
+  data-agent-brokerage="Your Brokerage Inc."
+  data-color-primary="#2D3748"
+  data-color-accent="#D69E2E"
+  data-country="CA">
+</div>
+<div class="spacer"></div>
+<script>
+var m=(location.search.match(/m=([a-z]+)/)||[])[1]||'full';
+function after(){
+  var sts=[].slice.call(document.querySelectorAll('style')).filter(function(x){return x.textContent.indexOf('#idx-widget-root')>-1;});
+  if(m==='nostyle'){sts.forEach(function(x){x.remove();});}
+  if(m==='nofixed'){var n=document.createElement('style');n.textContent='#idx-widget-root [class*="-overlay"],#idx-widget-root .idx-saved-panel{display:none!important}';document.head.appendChild(n);}
+}
+if(m!=='none'){var s=document.createElement('script');s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=14';s.onload=after;document.body.appendChild(s);}
+var b=document.createElement('div');b.style.cssText='position:fixed;left:6px;top:30%;z-index:2147483647;background:rgba(0,0,0,0.9);color:#ff0;font:bold 14px/1.4 monospace;padding:8px 10px;border:2px solid #ff0;border-radius:6px;pointer-events:none;white-space:pre';document.body.appendChild(b);
+setInterval(function(){var v=window.visualViewport;b.textContent=['MODE '+m,'iH '+innerHeight+' vvH '+(v?v.height.toFixed(0):'-')+' vvT '+(v?v.offsetTop.toFixed(0):'-'),'sY '+Math.round(scrollY)+' docH '+document.documentElement.scrollHeight].join('\n');},400);
+</script>
+</body>
+</html>
