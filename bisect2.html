@@ -20,17 +20,13 @@ body{margin:0;font-family:sans-serif}
   data-color-accent="#D69E2E"
   data-country="CA">
 </div>
-<div class="spacer"></div>
 <script>
-var m=(location.search.match(/m=([a-z]+)/)||[])[1]||'full';
-function after(){
-  var sts=[].slice.call(document.querySelectorAll('style')).filter(function(x){return x.textContent.indexOf('#idx-widget-root')>-1;});
-  if(m==='nostyle'){sts.forEach(function(x){x.remove();});}
-  if(m==='nofixed'){var n=document.createElement('style');n.textContent='#idx-widget-root [class*="-overlay"],#idx-widget-root .idx-saved-panel{display:none!important}';document.head.appendChild(n);}
-}
-if(m!=='none'){var s=document.createElement('script');s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=14';s.onload=after;document.body.appendChild(s);}
+var q=location.search,sp=(q.match(/s=([01])/)||[])[1]!=='0',fx=(q.match(/fix=([01])/)||[])[1]==='1';
+if(sp){var d=document.createElement('div');d.className='spacer';document.body.appendChild(d);}
+if(fx){document.documentElement.style.minHeight='calc(100vh + 2px)';document.body.style.minHeight='calc(100vh + 2px)';}
+var s=document.createElement('script');s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=14';document.body.appendChild(s);
 var b=document.createElement('div');b.style.cssText='position:fixed;left:6px;top:30%;z-index:2147483647;background:rgba(0,0,0,0.9);color:#ff0;font:bold 14px/1.4 monospace;padding:8px 10px;border:2px solid #ff0;border-radius:6px;pointer-events:none;white-space:pre';document.body.appendChild(b);
-setInterval(function(){var v=window.visualViewport;b.textContent=['MODE '+m,'iH '+innerHeight+' vvH '+(v?v.height.toFixed(0):'-')+' vvT '+(v?v.offsetTop.toFixed(0):'-'),'sY '+Math.round(scrollY)+' docH '+document.documentElement.scrollHeight].join('\n');},400);
+setInterval(function(){var v=window.visualViewport,o=document.getElementById('idxModalOverlay'),r=o&&o.classList.contains('open')?o.getBoundingClientRect():null;b.textContent=['spacer '+(sp?'ON':'OFF')+'  fix '+(fx?'ON':'OFF'),'iH '+innerHeight+' vvH '+(v?v.height.toFixed(0):'-')+' vvT '+(v?v.offsetTop.toFixed(0):'-'),'sY '+Math.round(scrollY)+' docH '+document.documentElement.scrollHeight,'overlay '+(r?('top '+r.top.toFixed(0)+' h '+r.height.toFixed(0)):'closed')].join('\n');},400);
 </script>
 </body>
 </html>
