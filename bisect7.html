@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bisect 7</title>
+<style>
+body{margin:0;font-family:sans-serif}
+#bxLogBtn{position:fixed;top:6px;right:6px;z-index:2147483647;background:#ff0;color:#000;font:bold 14px monospace;border:2px solid #000;border-radius:8px;padding:8px 12px}
+#bxLogTa{position:fixed;left:3%;top:10%;width:94%;height:60%;z-index:2147483647;font:11px monospace;background:#fff;color:#000;border:3px solid #f00;display:none}
+</style>
+</head>
+<body>
+
+<div id="idx-widget-root"
+  data-api-key="MILE-CA-TEST-2026"
+  data-agent-name="Your Name"
+  data-agent-email="you@youremail.com"
+  data-agent-phone="(416) 555-0199"
+  data-agent-brokerage="Your Brokerage Inc."
+  data-color-primary="#2D3748"
+  data-color-accent="#D69E2E"
+  data-country="CA">
+</div>
+
+<!--
+  URL options (add to the address, e.g. bisect7.html?idxshare=copy):
+    (none)           normal behaviour, diagnostic logging only
+    ?idxshare=copy   forces the "copy link" path; navigator.share is never called
+    ?idxnocri=1      turns the Chrome-iPad workaround in widget.js off
+  Tap the yellow COPY LOG button (top right) and paste the text into the chat.
+-->
+
+<script>
+(function(){
+var L=[],t0=Date.now(),lastClick=0,lastTouch='';
+function T(){return ((Date.now()-t0)/1000).toFixed(2)+'s';}
+function vp(){var v=window.visualViewport;return 'iH'+innerHeight+' vvH'+(v?v.height.toFixed(0):'-')+' vvT'+(v?v.offsetTop.toFixed(0):'-');}
+function log(m){L.push(T()+' '+m);}
+log('START '+location.search+' '+navigator.userAgent.replace(/\s+/g,' ').slice(0,110));
+
+var mode=(location.search.match(/[?&]idxshare=(\w+)/)||[])[1]||'normal';
+if(mode==='copy'&&navigator.canShare){navigator.canShare=function(){return false;};log('canShare forced false (copy mode)');}
+
+if(navigator.share){
+  var os=navigator.share.bind(navigator),n=0;
+  navigator.share=function(d){
+    var id=++n;
+    log('share#'+id+' CALLED '+vp()+' activation='+(navigator.userActivation?navigator.userActivation.isActive:'?'));
+    var p=os(d);
+    p.then(function(){log('share#'+id+' RESOLVED');},
+           function(e){log('share#'+id+' REJECTED '+(e&&e.name)+' | '+(e&&e.message));});
+    return p;
+  };
+}
+
+function lbl(t){
+  var b=t&&t.closest?t.closest('button,a,.idx-cta-btn'):null,x=b||t;
+  return x&&x.tagName?(x.tagName.toLowerCase()+(x.id?'#'+x.id:'')+' "'+((x.textContent||'').trim().slice(0,18))+'"'):'?';
+}
+
+document.addEventListener('touchstart',function(e){
+  if(e.target&&e.target.id==='bxLogBtn')return;
+  var t=e.touches[0],hit=document.elementFromPoint(t.clientX,t.clientY);
+  lastTouch=lbl(e.target);
+  log('touchstart '+lastTouch+(hit&&hit!==e.target?' HIT='+lbl(hit):'')+' '+vp());
+  var started=Date.now(),who=lastTouch;
+  setTimeout(function(){if(lastClick<started)log('   (no click followed '+who+')');},600);
+},true);
+
+document.addEventListener('click',function(e){
+  if(e.target&&e.target.id==='bxLogBtn')return;
+  lastClick=Date.now();log('click '+lbl(e.target));
+},true);
+
+new MutationObserver(function(ms){ms.forEach(function(m){
+  var t=m.target;if(!t.id||!/Overlay$/.test(t.id))return;
+  var was=/\bopen\b/.test(m.oldValue||''),is=t.classList.contains('open');
+  if(was!==is)log((is?'OPEN  ':'CLOSE ')+t.id+' '+vp());
+});}).observe(document.documentElement,{attributes:true,attributeFilter:['class'],attributeOldValue:true,subtree:true});
+
+function addBtn(){
+  var b=document.createElement('button');b.id='bxLogBtn';b.textContent='COPY LOG';
+  var ta=document.createElement('textarea');ta.id='bxLogTa';
+  document.body.appendChild(b);document.body.appendChild(ta);
+  function fallback(){
+    ta.value=L.join('\n');ta.style.display='block';ta.focus();ta.select();
+    b.textContent='TAP TO CLOSE';
+    b.onclick=function(){ta.style.display='none';b.textContent='COPY LOG';b.onclick=null;};
+  }
+  b.addEventListener('click',function(){
+    if(b.onclick)return;
+    var txt=L.join('\n');
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){
+        b.textContent='COPIED ('+L.length+')';setTimeout(function(){b.textContent='COPY LOG';},2000);
+      },fallback);
+    }else fallback();
+  });
+}
+if(document.body)addBtn();else document.addEventListener('DOMContentLoaded',addBtn);
+})();
+</script>
+
+<script>
+/* loads the live widget.js; Date.now() makes every load skip the cache */
+var s=document.createElement('script');
+s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v='+Date.now();
+document.body.appendChild(s);
+</script>
+
+</body>
+</html>
