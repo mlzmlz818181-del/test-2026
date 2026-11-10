@@ -103,6 +103,8 @@ if(document.body)addBtn();else document.addEventListener('DOMContentLoaded',addB
 </script>
 
 <script>
+/* ?ta0=1 turns the widget's touch-action:manipulation rule off for testing */
+if(/[?&]ta0=1/.test(location.search)){var tz=document.createElement('style');tz.textContent='#idx-widget-root *{touch-action:auto!important;}';document.head.appendChild(tz);}
 /* loads the live widget.js; Date.now() makes every load skip the cache */
 var s=document.createElement('script');
 s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v='+Date.now();
