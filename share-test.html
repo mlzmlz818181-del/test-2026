@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Share test</title>
+<style>
+body{font-family:-apple-system,sans-serif;margin:0;padding:24px;background:#fff;color:#111}
+button{font-size:20px;padding:16px 28px;border-radius:12px;border:2px solid #222;background:#eef;margin:8px 8px 8px 0}
+#log{white-space:pre-wrap;font:14px/1.5 monospace;background:#f4f4f4;padding:12px;border-radius:8px;margin-top:16px;min-height:120px}
+</style>
+</head>
+<body>
+<h2>Plain Web Share test (no widget)</h2>
+<p>Tap <b>Share</b>. Does the iPad share sheet appear? If it does, tap outside it to dismiss, then tap Share again. Do this 5 times and write down how many times it appeared.</p>
+<button id="b1">Share</button>
+<button id="b2">Copy log</button>
+<div id="log"></div>
+<script>
+var L=[],t0=Date.now(),n=0;
+function log(m){L.push(((Date.now()-t0)/1000).toFixed(2)+'s '+m);document.getElementById('log').textContent=L.slice(-14).join('\n');}
+log('START '+navigator.userAgent.replace(/\s+/g,' ').slice(0,90));
+log('navigator.share='+(typeof navigator.share)+'  canShare='+(typeof navigator.canShare));
+var data={title:'Share test',url:'https://example.com/?test='+Date.now()};
+log('canShare(data)='+(navigator.canShare?navigator.canShare(data):'n/a'));
+document.getElementById('b1').addEventListener('click',function(){
+  var id=++n;
+  log('tap #'+id+' -> share CALLED  activation='+(navigator.userActivation?navigator.userActivation.isActive:'?'));
+  navigator.share(data).then(function(){log('share#'+id+' RESOLVED');},function(e){log('share#'+id+' REJECTED '+(e&&e.name)+' | '+(e&&e.message));});
+});
+document.getElementById('b2').addEventListener('click',function(){
+  var t=L.join('\n'),b=this;
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){b.textContent='Copied ('+L.length+')';setTimeout(function(){b.textContent='Copy log';},2000);});}
+});
+</script>
+</body>
+</html>
