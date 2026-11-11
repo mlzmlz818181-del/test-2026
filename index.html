@@ -1,40 +1,39 @@
 <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IDX Test</title>
 <style>
   .idx-test-layout{display:grid;grid-template-columns:var(--left,35%) 1fr;gap:0;border:2px solid #444;min-height:600px;}
   .idx-test-left{padding:24px;background:#f4f4f4;border-right:2px solid #444;}
   .idx-test-right{padding:16px;min-width:0;}
   @media(max-width:700px){.idx-test-layout{grid-template-columns:1fr;}.idx-test-left{border-right:0;border-bottom:2px solid #444;}}
 </style>
-
+</head>
+<body>
 <div class="idx-test-layout">
   <div class="idx-test-left">
     <h3>About the Agent</h3>
     <p>Sample left-hand content. Contact info, bio, etc.</p>
   </div>
   <div class="idx-test-right">
-
-    <!-- PASTE YOUR WIDGET SNIPPET HERE (the div + script) -->
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IDX Test</title>
-</head>
-<body>
-<div id="idx-widget-root"
-  data-api-key="MILE-CA-TEST-2026"
-  data-agent-name="Your Name"
-  data-agent-email="you@youremail.com"
-  data-agent-phone="(416) 555-0199"
-  data-agent-brokerage="Your Brokerage Inc."
-  data-color-primary="#2D3748"
-  data-color-accent="#D69E2E"
-  data-country="CA">
+    <div id="idx-widget-root"
+      data-api-key="MILE-CA-TEST-2026"
+      data-agent-name="Your Name"
+      data-agent-email="you@youremail.com"
+      data-agent-phone="(416) 555-0199"
+      data-agent-brokerage="Your Brokerage Inc."
+      data-color-primary="#2D3748"
+      data-color-accent="#D69E2E"
+      data-country="CA">
+    </div>
+    <script>
+      var s=document.createElement('script');
+      s.src='https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v='+Date.now();
+      document.body.appendChild(s);
+    </script>
+  </div>
 </div>
-<script src="https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026&v=19"></script>
 </body>
 </html>
-</div>
-</div>
-<script>  
