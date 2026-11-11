@@ -42,7 +42,7 @@ log('START '+location.search+' '+navigator.userAgent.replace(/\s+/g,' ').slice(0
 var mode=(location.search.match(/[?&]idxshare=(\w+)/)||[])[1]||'normal';
 if(mode==='copy'&&navigator.canShare){navigator.canShare=function(){return false;};log('canShare forced false (copy mode)');}
 
-if(navigator.share){
+if(navigator.share&&!/[?&]nowrap=1/.test(location.search)){. Then open bisect7.html?nowrap=1
   var os=navigator.share.bind(navigator),n=0;
   navigator.share=function(d){
     var id=++n;
