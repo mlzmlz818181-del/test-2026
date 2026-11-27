@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- yourIDX test page | Platform: GitHub Pages | Layout: two-column (35% / 65%) | Short snippet (customer-facing) | Saved: Nov 26, 2026 -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>IDX short snippet test (two-column)</title>
+<style>
+.idx-test-layout{display:grid;grid-template-columns:var(--left,35%) 1fr;gap:0;border:2px solid #444;min-height:600px;}
+.idx-test-left{padding:24px;background:#f4f4f4;border-right:2px solid #444;}
+.idx-test-right{padding:16px;min-width:0;}
+@media(max-width:700px){.idx-test-layout{grid-template-columns:1fr;}.idx-test-left{border-right:0;border-bottom:2px solid #444;}}
+</style>
+</head>
+<body>
+<div class="idx-test-layout">
+<div class="idx-test-left">
+<h3>About the Agent</h3>
+<p>Sample left-hand content. Contact info, bio, etc.</p>
+</div>
+<div class="idx-test-right">
+<div id="idx-widget-root"
+  data-color-primary="#1B2B4B"
+  data-color-accent="#2563EB">
+</div>
+<script src="https://ca.youridx.com/widget.js?key=MILE-CA-TEST-2026"></script>
+</div>
+</div>
+</body>
+</html>
